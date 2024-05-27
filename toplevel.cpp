@@ -29,9 +29,9 @@ int listener(uint32 *ram, uint32 *message_id, uint32 *number_of_cities, uint32 *
 // Main Function - solver
 int toplevel(uint32 *ram, uint32 *message_id, uint32 *number_of_cities, uint32 *scenario_id) {
 	#pragma HLS INTERFACE m_axi port=ram offset=slave bundle=MAXI
-	#pragma HLS INTERFACE s_axilite port=messageId bundle=AXILiteS
-	#pragma HLS INTERFACE s_axilite port=numberOfCities bundle=AXILiteS
-	#pragma HLS INTERFACE s_axilite port=scenarioId bundle=AXILiteS
+	#pragma HLS INTERFACE s_axilite port=message_id bundle=AXILiteS
+	#pragma HLS INTERFACE s_axilite port=number_of_cities bundle=AXILiteS
+	#pragma HLS INTERFACE s_axilite port=scenario_id bundle=AXILiteS
 	#pragma HLS INTERFACE s_axilite port=return bundle=AXILiteS
 		
 	uint8 cache[400]; // enough space for a 20x20 matrix
@@ -59,6 +59,7 @@ int toplevel(uint32 *ram, uint32 *message_id, uint32 *number_of_cities, uint32 *
 	}
 	
 	// Rest of the code...
+	
 
 	// Finish up - add the shortest path
 	params.shortest_path = shortest_path;
