@@ -5,7 +5,7 @@
 using namespace std;
 
 // N is the number of cities/Node given
-#define N 5
+#define N 8
 #define INF INT_MAX
 
 // Structure to store all the necessary information 
@@ -268,14 +268,42 @@ int toplevel(uint32 *ram, uint32 *message_id, uint32 *number_of_cities, uint32 *
     //                               { 15, 35, INF, 30 },
     //                               { 20, 25, 30, INF } };
 
-    int CostGraphMatrix[N][N] = {   { INF, 30, 33, 10, 25},
-                                    {30,  INF, 19, 15, 18},
-                                    {33, 19,  INF, 25, 15},
-                                    {10, 15, 25,  INF,  3},
-                                    {25, 18, 15,  3,  INF}};
+    // int CostGraphMatrix[N][N] = {   { INF, 30, 33, 10, 25},
+    //                                 {30,  INF, 19, 15, 18},
+    //                                 {33, 19,  INF, 25, 15},
+    //                                 {10, 15, 25,  INF,  3},
+    //                                 {25, 18, 15,  3,  INF}};
+
+    // now for an 8x8 matrix
+    int CostGraphMatrix[N][N] = {   { INF, 10, 15, 20, 25, 30, 35, 40 },
+                                    { 10, INF, 35, 25, 30, 35, 40, 45 },
+                                    { 15, 35, INF, 30, 35, 40, 45, 50 },
+                                    { 20, 25, 30, INF, 45, 50, 55, 60 },
+                                    { 25, 30, 35, 45, INF, 65, 70, 75 },
+                                    { 30, 35, 40, 50, 65, INF, 85, 90 },
+                                    { 35, 40, 45, 55, 70, 85, INF, 105 },
+                                    { 40, 45, 50, 60, 75, 90, 105, INF } };     
+
+    
+    // now for a 15x15 matrix
+    // int CostGraphMatrix[15][15];    
+    // // Generate a 15x15 matrix with INF down the leading diagonal
+    // for (int i = 0; i < 15; i++) {
+    //     for (int j = 0; j < 15; j++) {
+    //         if (i == j) {
+    //             CostGraphMatrix[i][j] = INF;
+    //         } else {
+    //             // Generate random numbers for the other values
+    //             CostGraphMatrix[i][j] = rand() % 100 + 1;
+    //         }
+    //     }
+    // }
+
+
+
 
     // Function call
     int val = solve(CostGraphMatrix);
-    cout << "Total cost is " << val << "\n";
+    std::cout << "Total cost is " << val << "\n";
     return 0;
 }

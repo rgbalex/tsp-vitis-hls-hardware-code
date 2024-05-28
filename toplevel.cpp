@@ -71,7 +71,7 @@ int nearest_neigbour_first (uint8 adjacency_matrix[], int num_cities) {
     // finish with a loop back to city 0
     int final_distance = adjacency_matrix[index(visited_cities[visited_cities_tail-1], 0, num_cities)];
     worst_case_distance += final_distance;
-    printf("Adding route from last visited city back to city 0...\n");
+    // printf("Adding route from last visited city back to city 0...\n");
     printf("City: %d, Distance: %d, Worst case: %d\n\n", 0, final_distance, worst_case_distance);
 
 
