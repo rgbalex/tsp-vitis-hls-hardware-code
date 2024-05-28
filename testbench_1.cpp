@@ -25,12 +25,17 @@ int test_1() {
     // [ 18  250  189    0]
     // Answer: 457
 
-    printf("Hello, world!\n");
+    printf("Hello, world!\n\n");
 
-    _mainmemory[0] = 0x00B1FC12;
-    _mainmemory[1] = 0xB10049FA;
-    _mainmemory[2] = 0xFC4900BD;
-    _mainmemory[3] = 0x12FABD00;
+    // _mainmemory[0] = 0x00B1FC12;
+    // _mainmemory[1] = 0xB10049FA;
+    // _mainmemory[2] = 0xFC4900BD;
+    // _mainmemory[3] = 0x12FABD00;
+
+    _mainmemory[0] = 0x12FCB100;
+    _mainmemory[1] = 0xFA4900B1;
+    _mainmemory[2] = 0XBD0049FC;
+    _mainmemory[3] = 0x00BDFA12;
 
     toplevel(_mainmemory,&_messageId, &_numberOfCities, &_scenarioId);
 
