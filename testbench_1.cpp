@@ -136,15 +136,12 @@ int test_2() {
     }
     _mainmemory[index] = output;
 
-    // printf("_mainmemory[0] %d",_mainmemory[0]);
-//    assert(_mainmemory[0] == ~0x001E210A);
-//    assert(_mainmemory[0] == 0x0A211E00);
-//
-//    assert(_mainmemory[1] == 0x13001E19);
-//    assert(_mainmemory[2] == 0x1321120F);
-//    assert(_mainmemory[3] == 0x0A0F1900);
-//    assert(_mainmemory[4] == 0x0300190F);
-//    assert(_mainmemory[5] == 0x030F1219);
+    assert(_mainmemory[0] == 0x0A211E00);
+    assert(_mainmemory[1] == 0x13001E19);
+    assert(_mainmemory[2] == 0x1321120F);
+    assert(_mainmemory[3] == 0x0A0F1900);
+    assert(_mainmemory[4] == 0x0300190F);
+    assert(_mainmemory[5] == 0x030F1219);
     assert(_mainmemory[6] == 0); // the missing value
 
     int val = toplevel(_mainmemory,&_messageId, &_numberOfCities, &_scenarioId);
