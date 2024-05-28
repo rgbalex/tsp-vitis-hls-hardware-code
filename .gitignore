@@ -1,2 +1,6 @@
 /testbench_1
 /testbench_1.exe
+/scratch
+/scratch.exe
+*.exe
+/*.exe
