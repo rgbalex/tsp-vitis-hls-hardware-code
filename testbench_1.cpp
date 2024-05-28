@@ -25,6 +25,8 @@ int test_1() {
     // [ 18  250  189    0]
     // Answer: 457
 
+    printf("Hello, world!\n");
+
     _mainmemory[0] = 0x00B1FC12;
     _mainmemory[1] = 0xB10049FA;
     _mainmemory[2] = 0xFC4900BD;
