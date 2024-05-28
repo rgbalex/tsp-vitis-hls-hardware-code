@@ -76,6 +76,7 @@ int test_2() {
 
             // left shift the char out of the int
             temp = (char)(matrix[i][j]);
+            temp = (char)(matrix[i][j]);
 
             // left shift temp into correct position w.r.t counter
             building = temp << (8 * counter);
@@ -122,14 +123,14 @@ int test_3() {
 
     //minimum path is 330
     //nnf path is 395
-    int matrix[8][8] = {   { 0 , 10, 15, 20, 25, 30, 35, 40  },
-                                    { 10, 0 , 35, 25, 30, 35, 40, 45  },
-                                    { 15, 35, 0 , 30, 35, 40, 45, 50  },
-                                    { 20, 25, 30, 0 , 45, 50, 55, 60  },
-                                    { 25, 30, 35, 45, 0 , 65, 70, 75  },
-                                    { 30, 35, 40, 50, 65, 0 , 85, 90  },
-                                    { 35, 40, 45, 55, 70, 85, 0 , 105 },
-                                    { 40, 45, 50, 60, 75, 90, 105, 0  } };
+    int matrix[8][8] = {    { 0 , 10, 15, 20, 25, 30, 35,  40  },
+                            { 10, 0 , 35, 25, 30, 35, 40,  45  },
+                            { 15, 35, 0 , 30, 35, 40, 45,  50  },
+                            { 20, 25, 30, 0 , 45, 50, 55,  60  },
+                            { 25, 30, 35, 45, 0 , 65, 70,  75  },
+                            { 30, 35, 40, 50, 65, 0 , 85,  90  },
+                            { 35, 40, 45, 55, 70, 85, 0 ,  105 },
+                            { 40, 45, 50, 60, 75, 90, 105, 0   }    };
 
     printf("\nTest 3\n\n");
 
@@ -142,6 +143,7 @@ int test_3() {
         for (int j = 0; j < _numberOfCities; j++) {
 
             // left shift the char out of the int
+            temp = (char)(matrix[i][j]);
             temp = (char)(matrix[i][j]);
 
             // left shift temp into correct position w.r.t counter
