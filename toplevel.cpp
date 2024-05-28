@@ -103,14 +103,14 @@ int toplevel(uint32 *ram, uint32 *message_id, uint32 *number_of_cities, uint32 *
 	// Build the problem
 	memcpy(cache, ram, sizeof(cache));
 
-//	// Print out all elements in cache
-//	for (int i = 0; i < int_number_of_cities; i++) {
-//		for (int j = 0; j < int_number_of_cities; j++) {
-//			printf("%d ", cache[index(i, j, int_number_of_cities)]);
-//		}
-//		printf("\n");
-//	}
-//    printf("\n");
+	// Print out all elements in cache
+	for (int i = 0; i < int_number_of_cities; i++) {
+		for (int j = 0; j < int_number_of_cities; j++) {
+			printf("%d ", cache[index(i, j, int_number_of_cities)]);
+		}
+		printf("\n");
+	}
+   printf("\n");
 
 	// Rest of the code...
     int nnf = nearest_neigbour_first(cache, int_number_of_cities);
