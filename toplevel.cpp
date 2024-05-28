@@ -83,7 +83,7 @@ int nearest_neigbour_first (uint8 adjacency_matrix[], int num_cities) {
 
     printf("Your upper bound for distance is %d\n", worst_case_distance);
 
-    return 0;
+    return worst_case_distance;
 }
 
 // Main Function - solver
@@ -113,9 +113,9 @@ int toplevel(uint32 *ram, uint32 *message_id, uint32 *number_of_cities, uint32 *
 //    printf("\n");
 
 	// Rest of the code...
-    nearest_neigbour_first(cache, int_number_of_cities);
+    int nnf = nearest_neigbour_first(cache, int_number_of_cities);
 
 
 	// Finish up - add the shortest path
-	return shortest_path;
+	return nnf;
 }
