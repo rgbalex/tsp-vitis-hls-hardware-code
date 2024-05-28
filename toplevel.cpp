@@ -77,9 +77,9 @@ int nearest_neigbour_first (uint8 adjacency_matrix[], int num_cities) {
 
    // print out the visited_cities vector as this contains your nearest neighbour tour
    print_loop: for (int i = 0; i < visited_cities_tail; i++) {
-   	printf("%d ", visited_cities[i]);
+   	printf("%d ", visited_cities[i]+1);
    }
-   printf("0\n\n");
+   printf("1\n\n");
 
     printf("Your upper bound for distance is %d\n", worst_case_distance);
 

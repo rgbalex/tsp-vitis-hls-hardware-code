@@ -222,7 +222,7 @@ int solve(int CostGraphMatrix[N][N])
             min->path.push_back(make_pair(i, 0));
             
             // Print list of cities visited
-            // TSPPAthPrint(min->path);
+            TSPPAthPrint(min->path);
             
             // Return optimal cost
             return min->cost;
@@ -275,6 +275,7 @@ int toplevel(uint32 *ram, uint32 *message_id, uint32 *number_of_cities, uint32 *
                                     {25, 18, 15,  3,  INF}};
 
     // Function call
-    cout << "Total cost is " << solve(CostGraphMatrix) << "\n";
+    int val = solve(CostGraphMatrix);
+    cout << "Total cost is " << val << "\n";
     return 0;
 }
