@@ -57,14 +57,13 @@ int test_2() {
     // n.b. scenario id is made up
 
     //minimum path is 77
-    int CostGraphMatrix[5][5] = {   { 0, 30, 33, 10, 25},
-                                    {30,  0, 19, 15, 18},
-                                    {33, 19,  0, 25, 15},
-                                    {10, 15, 25,  0,  3},
-                                    {25, 18, 15,  3,  0}};
+    int matrix[5][5] = {    { 0, 30, 33, 10, 25},
+                            {30,  0, 19, 15, 18},
+                            {33, 19,  0, 25, 15},
+                            {10, 15, 25,  0,  3},
+                            {25, 18, 15,  3,  0} };
 
     printf("\nTest 2\n\n");
-    int * address = &*&CostGraphMatrix[0][0];
 
 
     int counter = 0;
@@ -72,23 +71,19 @@ int test_2() {
     uint32 output;
     uint32 building;
     char temp;
-    for (int i = 0; i < 5; i++) {
-        for (int j = 0; j < 5; j++) {
+    for (int i = 0; i < _numberOfCities; i++) {
+        for (int j = 0; j < _numberOfCities; j++) {
 
             // left shift the char out of the int
-            temp = (char)(CostGraphMatrix[i][j]);
-            printf("%d, %d, Temp: %d\n",i, j, temp);
+            temp = (char)(matrix[i][j]);
 
             // left shift temp into correct position w.r.t counter
             building = temp << (8 * counter);
-            printf("Building: %d\n",building);
 
             // or into output
             output = output | building;
-            printf("Output: %d\n",output);
 
             if (counter == 3) {
-                printf("               -> Output: %d\n",output);
                 _mainmemory[index] = output;
                 counter = 0;
                 building = 0;
@@ -127,7 +122,7 @@ int test_3() {
 
     //minimum path is 330
     //nnf path is 395
-    int CostGraphMatrix[8][8] = {   { 0 , 10, 15, 20, 25, 30, 35, 40  },
+    int matrix[8][8] = {   { 0 , 10, 15, 20, 25, 30, 35, 40  },
                                     { 10, 0 , 35, 25, 30, 35, 40, 45  },
                                     { 15, 35, 0 , 30, 35, 40, 45, 50  },
                                     { 20, 25, 30, 0 , 45, 50, 55, 60  },
@@ -147,7 +142,7 @@ int test_3() {
         for (int j = 0; j < _numberOfCities; j++) {
 
             // left shift the char out of the int
-            temp = (char)(CostGraphMatrix[i][j]);
+            temp = (char)(matrix[i][j]);
 
             // left shift temp into correct position w.r.t counter
             building = temp << (8 * counter);
