@@ -1,5 +1,5 @@
 // C++ code to implement the approach
-
+#include "toplevel.h"
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -202,7 +202,8 @@ int solve(int CostGraphMatrix[N][N])
     // and finally deletes it from the list
     while (!pq.empty()) {
         
-        // Find a live node with 
+        // Find a live node with uint32 _mainmemory[8000];
+
         // the least estimated cost
         Node* min = pq.top();
 
@@ -216,7 +217,7 @@ int solve(int CostGraphMatrix[N][N])
         // If all cities are visited
         if (min->level == N - 1) {
             
-            // Return to starting city
+            // Return toh starting city
             min->path.push_back(make_pair(i, 0));
             
             // Print list of cities visited
@@ -255,8 +256,12 @@ int solve(int CostGraphMatrix[N][N])
 }
 
 // Driver code
-int main()
-{
+int toplevel(uint32 *ram, uint32 *message_id, uint32 *number_of_cities, uint32 *scenario_id) {
+	#pragma HLS INTERFACE m_axi port=ram offset=slave bundle=MAXI
+	#pragma HLS INTERFACE s_axilite port=message_id bundle=AXILiteS
+	#pragma HLS INTERFACE s_axilite port=number_of_cities bundle=AXILiteS
+	#pragma HLS INTERFACE s_axilite port=scenario_id bundle=AXILiteS
+	#pragma HLS INTERFACE s_axilite port=return bundle=AXILiteS
     // int CostGraphMatrix[N][N] = { { INF, 10, 15, 20 },
     //                               { 10, INF, 35, 25 },
     //                               { 15, 35, INF, 30 },

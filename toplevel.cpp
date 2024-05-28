@@ -2,31 +2,9 @@
 
 #include <stdio.h>
 
-#include <cstdint>
-#include <cstring> // Include the <cstring> header for memcpy
+#include <cstring> // Include for memcpy
 
-#include <vector>
 #define INF 0xFF
-
-// Main Function
-int listener(uint32 *ram, uint32 *message_id, uint32 *number_of_cities, uint32 *scenario_id) {
-	#pragma HLS INTERFACE m_axi port=ram offset=slave bundle=MAXI
-	#pragma HLS INTERFACE s_axilite port=messageId bundle=AXILiteS
-	#pragma HLS INTERFACE s_axilite port=numberOfCities bundle=AXILiteS
-	#pragma HLS INTERFACE s_axilite port=scenarioId bundle=AXILiteS
-	#pragma HLS INTERFACE s_axilite port=return bundle=AXILiteS
-
-	uint8 char_number_of_cities = (char)(*number_of_cities >> 24);
-
-	// Initialize struct with given values
-    Request params = {
-        .message_id = 0x01,
-        .number_of_cities = char_number_of_cities, // or any value between 4 and 20
-        .scenario_id = *scenario_id, // big endian representation of 3
-    };
-	
-	return 0;
-}
 
 int index(int row, int col, int total_cities) {
 	return row + total_cities * col;
@@ -34,31 +12,34 @@ int index(int row, int col, int total_cities) {
 
 int nearest_neigbour_first (uint8 adjacency_matrix[], int num_cities) {
     int run = 1;
-    std::vector<int> visited_cities;
-    
-    int distance = INF;
-    int city_pointer = 0;
+    int visited_cities[20];
+    memset(visited_cities, -1, 20);
+    int visited_cities_tail = 0;
+
+    int distance = 0;
     int min_distance = INF;
     int min_city = -1;
-    
-    int skip = 0;
-    int worst_case_distance = INF;
-    
-    // start at city 0
-    visited_cities.push_back(0);
 
-    while (run) {
+    int skip = 0;
+    int worst_case_distance = 0;
+
+    // start at city 0
+
+    visited_cities[0] = 0;
+    visited_cities_tail ++;
+
+    nearest_neighbour_run: while (run) {
+#pragma HLS LOOP_TRIPCOUNT avg=4 max=20 min=4
+#pragma HLS LOOP_FLATTEN off
 
         // get the last city visited
-        for (int i = 0; i < num_cities; i++) {
+        nearest_neighbour_new_city: for (int current_city = 0; current_city < num_cities; current_city++) {
             skip = 0;
-            city_pointer = visited_cities.back();
-            distance = adjacency_matrix[index(city_pointer, i, num_cities)];
-            
-            if (distance == 0) { continue; }
+            distance = adjacency_matrix[index(visited_cities[visited_cities_tail-1], current_city, num_cities)];
 
-            for (int j = 0; j < visited_cities.size(); j++) {
-                if (visited_cities[j] == i) {
+            //pinning to 20
+            check_if_visited: for (int city = 0; city < num_cities; city++) {
+                if (visited_cities[city] == current_city) {
                     skip = 1;
                 }
             }
@@ -67,30 +48,35 @@ int nearest_neigbour_first (uint8 adjacency_matrix[], int num_cities) {
 
             if (distance < min_distance) {
                 min_distance = distance;
-                min_city = i;
+                min_city = current_city;
             }
         }
-        
 
-        if (visited_cities.size() == num_cities) {
+
+        if (visited_cities_tail == num_cities) {
             run = 0;
         } else {
-            // printf("City: %d, Distance: %d\n", min_city, min_distance); 
-            visited_cities.push_back(min_city);
+            visited_cities[visited_cities_tail] = min_city;
+            visited_cities_tail ++;
             worst_case_distance += min_distance;
+            printf("City: %d, Distance: %d, Worst case: %d\n", min_city, min_distance, worst_case_distance);
             min_distance = INF;
         }
     }
 
     // finish with a loop back to city 0
-    worst_case_distance += adjacency_matrix[index(visited_cities.back(), 0, num_cities)];
+    int final_distance = adjacency_matrix[index(visited_cities[visited_cities_tail-1], 0, num_cities)];
+    worst_case_distance += final_distance;
+    printf("Adding route from last visited city back to city 0...\n");
+    printf("City: %d, Distance: %d, Worst case: %d\n\n", 0, final_distance, worst_case_distance);
 
-    // print out the visited_cities vector as this contains your nearest neigbour tour
-    for (int i = 0; i < visited_cities.size(); i++) { printf("%d ", visited_cities[i]); }
 
-    printf("\n");
-    printf("Your upper bound for distance is %d", worst_case_distance);
-    
+    // print out the visited_cities vector as this contains your nearest neighbour tour
+    print_loop: for (int i = 0; i < visited_cities_tail; i++) { printf("%d ", visited_cities[i]); }
+
+    printf("0\n\n");
+    printf("Your upper bound for distance is %d\n", worst_case_distance);
+
     return 0;
 }
 
@@ -108,15 +94,8 @@ int toplevel(uint32 *ram, uint32 *message_id, uint32 *number_of_cities, uint32 *
 	int int_number_of_cities = *number_of_cities;
 	uint32 shortest_path = -1;
 
-	// Initialize struct with given values
-    Solve params = {
-        .message_id = 0x01,
-        .number_of_cities = char_number_of_cities, // or any value between 4 and 20
-        .scenario_id = *scenario_id, // big endian representation of 3
-    };
-
 	// Build the problem
-	memcpy(cache, ram, sizeof(cache));
+	memcpy_loop: memcpy(cache, ram, sizeof(cache));
 
 	// Print out all elements in cache
 	for (int i = 0; i < int_number_of_cities; i++) {
@@ -128,11 +107,9 @@ int toplevel(uint32 *ram, uint32 *message_id, uint32 *number_of_cities, uint32 *
     printf("\n");
 
 	// Rest of the code...
-    // Nearest neigbour first soln
     nearest_neigbour_first(cache, int_number_of_cities);
 
 
 	// Finish up - add the shortest path
-	params.shortest_path = shortest_path;
 	return shortest_path;
 }
