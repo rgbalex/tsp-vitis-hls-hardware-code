@@ -1,10 +1,11 @@
 // C++ code to implement the approach
 #include "toplevel.h"
 #include <bits/stdc++.h>
+#include <vector>
 using namespace std;
 
 // N is the number of cities/Node given
-#define N 4
+#define N 5
 #define INF INT_MAX
 
 // Structure to store all the necessary information 
@@ -221,7 +222,7 @@ int solve(int CostGraphMatrix[N][N])
             min->path.push_back(make_pair(i, 0));
             
             // Print list of cities visited
-            TSPPAthPrint(min->path);
+            // TSPPAthPrint(min->path);
             
             // Return optimal cost
             return min->cost;
@@ -267,12 +268,13 @@ int toplevel(uint32 *ram, uint32 *message_id, uint32 *number_of_cities, uint32 *
     //                               { 15, 35, INF, 30 },
     //                               { 20, 25, 30, INF } };
 
-    int CostGraphMatrix[N][N] = { { INF, 177, 252, 18 },
-                                  { 177, INF, 73, 250 },
-                                  { 252, 73, INF, 189 },
-                                  { 18, 250, 189, INF } };
+    int CostGraphMatrix[N][N] = {   { INF, 30, 33, 10, 25},
+                                    {30,  INF, 19, 15, 18},
+                                    {33, 19,  INF, 25, 15},
+                                    {10, 15, 25,  INF,  3},
+                                    {25, 18, 15,  3,  INF}};
 
     // Function call
-    cout << "Total cost is " << solve(CostGraphMatrix);
+    cout << "Total cost is " << solve(CostGraphMatrix) << "\n";
     return 0;
 }

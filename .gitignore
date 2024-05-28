@@ -2,5 +2,7 @@
 /testbench_1.exe
 /scratch
 /scratch.exe
+/alternate_testbench_1
+/alternate_testbench_1.exe
 *.exe
 /*.exe

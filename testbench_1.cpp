@@ -58,22 +58,58 @@ int test_2() {
     // n.b. scenario id is made up
 
     //minimum path is 129
-    int CostGraphMatrix[5][5] = {   {17, 30, 33, 10, 25},
-                                    {66, 22, 19, 15, 18},
-                                    {89, 13, 8, 25, 15},
-                                    {33, 25, 16, 30, 3},
-                                    {25, 33, 35, 24, 37}};
+    int CostGraphMatrix[5][5] = {   { 0, 30, 33, 10, 25},
+                                    {30,  0, 19, 15, 18},
+                                    {33, 19,  0, 25, 15},
+                                    {10, 15, 25,  0,  3},
+                                    {25, 18, 15,  3,  0}};
 
     printf("\nTest 2\n\n");
+    int * address = &*&CostGraphMatrix[0][0];
 
-    printf("Addresss:%d\n", &*&CostGraphMatrix[0][0]);
-    int * temp = &*&CostGraphMatrix[0][0];
-    printf("CostGraphMatrix[0][0]:%d\n", CostGraphMatrix[0][0]);
-    *temp = 18;
-    printf("CostGraphMatrix[0][0]:%d\n", CostGraphMatrix[0][0]);
-    printf("CostGraphMatrix[0][0]:%d\n", CostGraphMatrix[0][1]);
-    *(temp+1) = 18;
-    printf("CostGraphMatrix[0][0]:%d\n", CostGraphMatrix[0][1]);
+
+    int counter = 0;
+    int index = 0;
+    uint32 output;
+    uint32 building;
+    char temp;
+    for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < 5; j++) {
+
+            // left shift the char out of the int
+            temp = (char)(CostGraphMatrix[i][j]);
+            printf("%d, %d, Temp: %d\n",i, j, temp);
+
+            // left shift temp into correct position w.r.t counter
+            building = temp << (8 * counter);
+            printf("Building: %d\n",building);
+
+            // or into output
+            output = output | building;
+            printf("Output: %d\n",output);
+
+            if (counter == 3) {
+                printf("               -> Output: %d\n",output);
+                _mainmemory[index] = output;
+                counter = 0;
+                building = 0;
+                output = 0;
+                index ++;
+            } else {
+                counter ++;
+            }
+
+        }
+    }
+    _mainmemory[index] = output;
+
+    assert(_mainmemory[0] == 0x0A211E00);
+    assert(_mainmemory[1] == 0x13001E19);
+    assert(_mainmemory[2] == 0x1321120F);
+    assert(_mainmemory[3] == 0x0A0F1900);
+    assert(_mainmemory[4] == 0x0300190F);
+    assert(_mainmemory[5] == 0x030F1219);
+    assert(_mainmemory[6] == 0); // the missing value
 
     int val = toplevel(_mainmemory,&_messageId, &_numberOfCities, &_scenarioId);
 
@@ -83,6 +119,8 @@ int test_2() {
 int main() {
     assert(test_1() == 0);
     assert(test_2() == 0);
+    // note: the above two tests can be solved by nnf
+    // larger solutions would need to be solved properly. 
 
     // printf("Tests completed successfuaslly (hopefully)\n\r");
     return 0;
