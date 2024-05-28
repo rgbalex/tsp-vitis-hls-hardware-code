@@ -56,7 +56,7 @@ int test_2() {
     uint32 _scenarioId = 0x00000015; // big endian representation of 3
     // n.b. scenario id is made up
 
-    //minimum path is 129
+    //minimum path is 77
     int CostGraphMatrix[5][5] = {   { 0, 30, 33, 10, 25},
                                     {30,  0, 19, 15, 18},
                                     {33, 19,  0, 25, 15},
@@ -111,6 +111,7 @@ int test_2() {
     assert(_mainmemory[6] == 0); // the missing value
 
     int val = toplevel(_mainmemory,&_messageId, &_numberOfCities, &_scenarioId);
+    assert(val == 77);
 
     return 0;
 }
@@ -136,31 +137,25 @@ int test_3() {
                                     { 40, 45, 50, 60, 75, 90, 105, 0  } };
 
     printf("\nTest 3\n\n");
-    int * address = &*&CostGraphMatrix[0][0];
-
 
     int counter = 0;
     int index = 0;
     uint32 output;
     uint32 building;
     char temp;
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
+    for (int i = 0; i < _numberOfCities; i++) {
+        for (int j = 0; j < _numberOfCities; j++) {
 
             // left shift the char out of the int
             temp = (char)(CostGraphMatrix[i][j]);
-            // printf("%d, %d, Temp: %d\n",i, j, temp);
 
             // left shift temp into correct position w.r.t counter
             building = temp << (8 * counter);
-            // printf("Building: %d\n",building);
 
             // or into output
             output = output | building;
-            // printf("Output: %d\n",output);
 
             if (counter == 3) {
-                // printf("               -> Output: %d\n",output);
                 _mainmemory[index] = output;
                 counter = 0;
                 building = 0;
@@ -175,13 +170,17 @@ int test_3() {
     _mainmemory[index] = output;
 
     int val = toplevel(_mainmemory,&_messageId, &_numberOfCities, &_scenarioId);
+    // assert(val == 330);
+    assert(val == 395);
+
+    
 
     return 0;
 }
 
 int main() {
-    // assert(test_1() == 0);
-    // assert(test_2() == 0);
+    assert(test_1() == 0);
+    assert(test_2() == 0);
     assert(test_3() == 0);
     // note: the above two tests can be solved by nnf
     // larger solutions would need to be solved properly. 
