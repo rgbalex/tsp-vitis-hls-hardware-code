@@ -78,8 +78,10 @@ int test_1() {
     _mainmemory[2] = 0XBD0049FC;
     _mainmemory[3] = 0x00BDFA12;
 
-    int val = toplevel(_mainmemory,&_messageId, &_numberOfCities, &_scenarioId);
+    uint32 shortest_distance = 9999;
+    int val = toplevel(_mainmemory,&_messageId, &_numberOfCities, &_scenarioId, &shortest_distance);
     assert(val == 457);
+    assert(shortest_distance == 457);
 
     return 0;
 }
@@ -144,9 +146,10 @@ int test_2() {
     assert(_mainmemory[5] == 0x030F1219);
     assert(_mainmemory[6] == 0); // the missing value
 
-    int val = toplevel(_mainmemory,&_messageId, &_numberOfCities, &_scenarioId);
+    uint32 shortest_distance = 9999;
+    int val = toplevel(_mainmemory,&_messageId, &_numberOfCities, &_scenarioId, &shortest_distance);
     assert(val == 77);
-
+    assert(shortest_distance == 77);
     return 0;
 }
 
@@ -204,9 +207,10 @@ int test_3() {
     }
     _mainmemory[index] = output;
 
-    int val = toplevel(_mainmemory,&_messageId, &_numberOfCities, &_scenarioId);
-    // assert(val == 330);
+    uint32 shortest_distance = 9999;
+    int val = toplevel(_mainmemory,&_messageId, &_numberOfCities, &_scenarioId, &shortest_distance);
     assert(val <= 400);
+    assert(shortest_distance <= 360);
 
     return 0;
 }
@@ -270,9 +274,10 @@ int test_4() {
     }
     _mainmemory[index] = output;
 
-    int val = toplevel(_mainmemory,&_messageId, &_numberOfCities, &_scenarioId);
-    // assert(val == 330);
-    assert(val <= 135);
+    uint32 shortest_distance = 9999;
+    int val = toplevel(_mainmemory,&_messageId, &_numberOfCities, &_scenarioId, &shortest_distance);
+    assert(val == 134);
+    assert(shortest_distance == 134);
 
 
     return 0;
