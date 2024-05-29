@@ -1,5 +1,10 @@
 #include "toplevel.h"
+
+#ifdef __linux__
 #include "hls_math.h"
+#else
+#include <cmath>
+#endif
 
 
 #include <stdio.h>
@@ -282,7 +287,19 @@ int nearest_neigbour_first (uint8 adjacency_matrix[], int num_cities) {
     int annealed_cost = path_cost_from_adjacency_matrix(adjacency_matrix, num_cities, visited_cities, visited_cities_tail);
     printf("Path cost recalculated from path is %d\n", annealed_cost);
 
-    return worst_case_distance;
+    int best_case_distance = worst_case_distance;
+    if (better_distance < best_case_distance) {
+        best_case_distance = better_distance;
+    }
+    if (best_distance < best_case_distance) {
+        best_case_distance = best_distance;
+    }
+    if (annealed_distance < best_case_distance) {
+        best_case_distance = annealed_distance;
+    }
+    printf("Minimum distance is %d\n", best_case_distance);
+
+    return best_case_distance;
 }
 
 // Main Function - solver
