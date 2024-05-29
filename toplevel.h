@@ -53,5 +53,6 @@ struct Solve_Reply
 
 // Prototypes
 int toplevel(uint32 *ram, uint32 *message_id, uint32 *number_of_cities, uint32 *scenario_id);
+int path_cost_from_adjacency_matrix(uint8 adjacency_matrix[], int num_cities, int path[], int path_length);
 
 #endif
