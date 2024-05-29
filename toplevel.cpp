@@ -11,6 +11,13 @@ int index(int row, int col, int total_cities) {
     return row + total_cities * col;
 }
 
+int rand() {
+    // hls did not know how to make a random number generator so I found one on the internet
+    static unsigned int seed = 12345; // initial seed value
+    seed = (1103515245 * seed + 12345) % (1 << 31); // linear congruential generator formula
+    return seed;
+}
+
 int path_cost_from_adjacency_matrix(uint8 adjacency_matrix[], int num_cities, int path[], int path_length) {
     int cost = 0;
     for (int i = 0; i < path_length-1; i++) {
