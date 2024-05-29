@@ -3,7 +3,6 @@
 #include <stdio.h>
 
 #include <cstring> // Include for memcpy
-#include <cmath> // Include for exp
 
 #define INF 0xFFFF
 
@@ -141,7 +140,16 @@ int anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_leng
 
         int new_distance = path_cost_from_adjacency_matrix(adjacency_matrix, num_cities, new_path, path_length);
 
-        double acceptance_probability = exp((distance - new_distance) / temperature);
+        double acceptance_probability = 1.0;
+        if (new_distance > distance) {
+            acceptance_probability = 0.0;
+        } else {
+            int exponent = (distance - new_distance) / temperature;
+            acceptance_probability = 1.0;
+            for (int i = 0; i < exponent; i++) {
+                acceptance_probability /= 10.0;
+            }
+        }
 
         if (acceptance_probability > (rand() % 100) / 100) {
             memcpy(current_path, new_path, sizeof(new_path));
