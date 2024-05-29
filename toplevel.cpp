@@ -111,23 +111,30 @@ int three_opt(uint8 adjacency_matrix[], int num_cities, int path[20], int path_l
 #pragma endregion
 
 #pragma region Helper Functions for simulated-annealing
-void anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_length) {
+int anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_length) {
     int iteration = -1;
     int max_iterations = 1000;
     double temperature = 10000.0;
     double cooling_rate = 0.9999;
     double absolute_temperature = 0.00001;
     int distance = INF;
+    int current_path[20];
     int new_path[20];
-
+    // memcpy route from path
+    memcpy(current_path, path, sizeof(current_path));
     // assuming the cities are already set up
     
     distance = path_cost_from_adjacency_matrix(adjacency_matrix, num_cities, path, path_length);
 
     while (temperature > absolute_temperature) {
-        memcpy(new_path, path, sizeof(new_path));
+        memcpy(new_path, current_path, sizeof(new_path));
         int first = rand() % path_length;
         int second = rand() % path_length;
+        if (first == second) { continue; }
+        if (first == 0 || second == 0) { continue; }
+        if (first == path_length-1 || second == path_length-1) { continue; }
+
+        // printf("Swapping %d and %d\n", first, second);
 
         int temp = new_path[first];
         new_path[first] = new_path[second];
@@ -138,13 +145,16 @@ void anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_len
         double acceptance_probability = exp((distance - new_distance) / temperature);
 
         if (acceptance_probability > (rand() % 100) / 100) {
-            memcpy(path, new_path, sizeof(new_path));
+            memcpy(current_path, new_path, sizeof(new_path));
             distance = new_distance;
         }
 
         temperature *= cooling_rate;
         iteration += 1;
     }
+    // set path to best path
+    memcpy(path, current_path, sizeof(current_path));
+    return distance;
 }
 #pragma endregion
 
@@ -200,7 +210,7 @@ int nearest_neigbour_first (uint8 adjacency_matrix[], int num_cities) {
             visited_cities[visited_cities_tail] = min_city;
             visited_cities_tail += 1;
             worst_case_distance += min_distance;
-            printf("City: %d, Distance: %d, Worst case: %d\n", min_city, min_distance, worst_case_distance);
+            // printf("City: %d, Distance: %d, Worst case: %d\n", min_city, min_distance, worst_case_distance);
             min_distance = INF;
         }
     }
@@ -213,14 +223,14 @@ int nearest_neigbour_first (uint8 adjacency_matrix[], int num_cities) {
     visited_cities_tail += 1;
 
     // printf("Adding route from last visited city back to city 0...\n");
-    printf("City: %d, Distance: %d, Worst case: %d\n\n", 0, final_distance, worst_case_distance);
+    // printf("City: %d, Distance: %d, Worst case: %d\n\n", 0, final_distance, worst_case_distance);
 
 
     // print out the visited_cities vector as this contains your nearest neighbour tour
-    print_loop: for (int i = 0; i < visited_cities_tail; i++) {
-        printf("%d ", visited_cities[i]+1);
-    }
-    printf("\n\n");
+    // print_loop: for (int i = 0; i < visited_cities_tail; i++) {
+    //     printf("%d ", visited_cities[i]+1);
+    // }
+    // printf("\n\n");
    
     printf("Your upper bound for distance is %d\n", worst_case_distance);
 
@@ -241,6 +251,15 @@ int nearest_neigbour_first (uint8 adjacency_matrix[], int num_cities) {
     printf("Best distance is %d\n", best_distance);
     printf("Best route is: ");
     print_loop_best: for (int i = 0; i < visited_cities_tail; i++) {
+        printf("%d ", visited_cities[i]+1);
+    }
+    printf("\n");
+
+    // perform simulated annealing
+    int annealed_distance = anneal(adjacency_matrix, num_cities, visited_cities, visited_cities_tail);
+    printf("Annealed distance is %d\n", annealed_distance);
+    printf("Annealed route is: ");
+    print_loop_annealed: for (int i = 0; i < visited_cities_tail; i++) {
         printf("%d ", visited_cities[i]+1);
     }
     printf("\n");
