@@ -1,4 +1,6 @@
 #include "toplevel.h"
+#include "hls_math.h"
+
 
 #include <stdio.h>
 
@@ -49,7 +51,9 @@ int two_opt(uint8 adjacency_matrix[], int num_cities, int path[20], int path_len
     memcpy(present_route, path, sizeof(present_route));
     
     for (int i = 1; i < path_length-2; i++) {
+#pragma HLS LOOP_FLATTEN off
         for (int j = 1; j < path_length - 1; j++) {
+#pragma HLS LOOP_FLATTEN off
             two_opt_swap(present_route, new_route, i, j);
             // printf("Swapping %d and %d\n", i, j);
             new_distance = path_cost_from_adjacency_matrix(adjacency_matrix, num_cities, new_route, path_length);
@@ -122,49 +126,45 @@ int anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_leng
     double temperature = 10000.0;
     double cooling_rate = 0.99999;
     double absolute_temperature = 0.00001;
-    int distance = INF;
+    int distance = 9999;
     int current_path[20];
     int new_path[20];
+    double acceptance_probability;
     // memcpy route from path
     memcpy(current_path, path, sizeof(current_path));
     // assuming the cities are already set up
     
     distance = path_cost_from_adjacency_matrix(adjacency_matrix, num_cities, path, path_length);
+    int run = 1;
+    annealing_while: while (run) {
+        if (temperature > absolute_temperature) { run = 0; }
 
-    while (temperature > absolute_temperature) {
         memcpy(new_path, current_path, sizeof(new_path));
         int first = rand() % path_length;
         int second = rand() % path_length;
-        if (first == second) { continue; }
-        if (first == 0 || second == 0) { continue; }
-        if (first == path_length-1 || second == path_length-1) { continue; }
+        bool a = (first == second);
+        bool b = (first == 0 || second == 0);
+        bool c = (first == path_length-1 || second == path_length-1);
 
-        // printf("Swapping %d and %d\n", first, second);
+        if (!(a || b || c)) {
+        	// printf("Swapping %d and %d\n", first, second);
 
-        int temp = new_path[first];
-        new_path[first] = new_path[second];
-        new_path[second] = temp;
+        	        int temp = new_path[first];
+        	        new_path[first] = new_path[second];
+        	        new_path[second] = temp;
 
-        int new_distance = path_cost_from_adjacency_matrix(adjacency_matrix, num_cities, new_path, path_length);
+        	        int new_distance = path_cost_from_adjacency_matrix(adjacency_matrix, num_cities, new_path, path_length);
 
-        double acceptance_probability = 1.0;
-        if (new_distance > distance) {
-            acceptance_probability = 0.0;
-        } else {
-            int exponent = (distance - new_distance) / temperature;
-            acceptance_probability = 1.0;
-            for (int i = 0; i < exponent; i++) {
-                acceptance_probability /= 10.0;
-            }
+					acceptance_probability = exp((distance - new_distance) / temperature);
+
+        	        if (acceptance_probability > (rand() % 100) / 100) {
+        	            memcpy(current_path, new_path, sizeof(new_path));
+        	            distance = new_distance;
+        	        }
+
+        	        temperature *= cooling_rate;
+        	        iteration += 1;
         }
-
-        if (acceptance_probability > (rand() % 100) / 100) {
-            memcpy(current_path, new_path, sizeof(new_path));
-            distance = new_distance;
-        }
-
-        temperature *= cooling_rate;
-        iteration += 1;
     }
     // set path to best path
     memcpy(path, current_path, sizeof(current_path));
