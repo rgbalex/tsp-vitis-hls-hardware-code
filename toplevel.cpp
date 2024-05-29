@@ -333,6 +333,10 @@ int toplevel(uint32 *ram, uint32 *message_id, uint32 *number_of_cities, uint32 *
     int nnf = nearest_neigbour_first(cache, int_number_of_cities);
     // Write the shortest distance to the variable
     *shortest_calculated_distance = nnf;
+
+    // copy the shortest distance to the first four bytes of ram
+    memcpy(ram, &nnf, sizeof(nnf));
+
     // Finish up - add the shortest path
     return nnf;
 }
