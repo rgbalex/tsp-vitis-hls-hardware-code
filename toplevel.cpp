@@ -113,9 +113,8 @@ int three_opt(uint8 adjacency_matrix[], int num_cities, int path[20], int path_l
 #pragma region Helper Functions for simulated-annealing
 int anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_length) {
     int iteration = -1;
-    int max_iterations = 1000;
     double temperature = 10000.0;
-    double cooling_rate = 0.9999;
+    double cooling_rate = 0.99999;
     double absolute_temperature = 0.00001;
     int distance = INF;
     int current_path[20];
@@ -263,6 +262,10 @@ int nearest_neigbour_first (uint8 adjacency_matrix[], int num_cities) {
         printf("%d ", visited_cities[i]+1);
     }
     printf("\n");
+    
+    printf("Double checking the calculated annealed distance");
+    int annealed_cost = path_cost_from_adjacency_matrix(adjacency_matrix, num_cities, visited_cities, visited_cities_tail);
+    printf("Path cost recalculated from path is %d\n", annealed_cost);
 
     return worst_case_distance;
 }

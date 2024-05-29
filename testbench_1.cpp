@@ -151,7 +151,7 @@ int test_2() {
 }
 
 int test_3() {
-        uint32 _messageId = 0x01;
+    uint32 _messageId = 0x01;
     uint32 _numberOfCities = 8;
     // unsure which, will test when in uni labs
     // uint32 _scenarioId = 0xc0000000; // big endian representation of 3
@@ -208,7 +208,72 @@ int test_3() {
     // assert(val == 330);
     assert(val <= 400);
 
+    return 0;
+}
+
+int test_4() {
+    uint32 _messageId = 0x01;
+    uint32 _numberOfCities = 12;
+    // unsure which, will test when in uni labs
+    // uint32 _scenarioId = 0xc0000000;
+    uint32 _scenarioId = 0x00000021;
+    // n.b. scenario id is made up
+
+    // minimum path is 310 according to copilot
+    // after running, i think it is 134-5
+    int matrix[12][12] = {
+        {0, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60},
+        {10, 0, 12, 18, 22, 28, 32, 38, 42, 48, 52, 58},
+        {15, 12, 0, 8, 14, 20, 24, 30, 34, 40, 44, 50},
+        {20, 18, 8, 0, 6, 12, 16, 22, 26, 32, 36, 42},
+        {25, 22, 14, 6, 0, 8, 12, 18, 22, 28, 32, 38},
+        {30, 28, 20, 12, 8, 0, 4, 10, 14, 20, 24, 30},
+        {35, 32, 24, 16, 12, 4, 0, 6, 10, 16, 20, 26},
+        {40, 38, 30, 22, 18, 10, 6, 0, 4, 10, 14, 20},
+        {45, 42, 34, 26, 22, 14, 10, 4, 0, 6, 10, 16},
+        {50, 48, 40, 32, 28, 20, 16, 10, 6, 0, 4, 10},
+        {55, 52, 44, 36, 32, 24, 20, 14, 10, 4, 0, 6},
+        {60, 58, 50, 42, 38, 30, 26, 20, 16, 10, 6, 0}
+    };
+
+    printf("\nTest 4\n\n");
     
+    int counter = 0;
+    int index = 0;
+    uint32 output = 0;
+    uint32 building = 0;
+    char temp;
+    for (int i = 0; i < _numberOfCities; i++) {
+        for (int j = 0; j < _numberOfCities; j++) {
+
+            // left shift the char out of the int
+            temp = (char)(matrix[i][j]);
+            temp = (char)(matrix[i][j]);
+
+            // left shift temp into correct position w.r.t counter
+            building = temp << (8 * (counter));
+
+            // or into output
+            output = output | building;
+
+            if (counter == 3) {
+                _mainmemory[index] = output;
+                counter = 0;
+                building = 0;
+                output = 0;
+                index ++;
+            } else {
+                counter ++;
+            }
+
+        }
+    }
+    _mainmemory[index] = output;
+
+    int val = toplevel(_mainmemory,&_messageId, &_numberOfCities, &_scenarioId);
+    // assert(val == 330);
+    assert(val <= 135);
+
 
     return 0;
 }
@@ -220,6 +285,7 @@ int main() {
     // larger solutions would need to be solved properly. 
     assert(test_3() == 0);
     // greedy algorithm works but not optimal solution
+    assert(test_4() == 0);
 
     // printf("Tests completed successfuaslly (hopefully)\n\r");
     return 0;
