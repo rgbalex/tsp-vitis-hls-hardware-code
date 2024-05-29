@@ -192,10 +192,20 @@ int nearest_neigbour_first (uint8 adjacency_matrix[], int num_cities) {
     // perform two opt swap
     int better_distance = two_opt(adjacency_matrix, num_cities, visited_cities, visited_cities_tail);
     printf("Better distance is %d\n", better_distance);
-    printf("Better route is:");
+    printf("Better route is: ");
     print_loop_better: for (int i = 0; i < visited_cities_tail; i++) {
         printf("%d ", visited_cities[i]+1);
     }
+    printf("\n");
+
+    // perform three opt swap
+    int best_distance = three_opt(adjacency_matrix, num_cities, visited_cities, visited_cities_tail);
+    printf("Best distance is %d\n", best_distance);
+    printf("Best route is: ");
+    print_loop_best: for (int i = 0; i < visited_cities_tail; i++) {
+        printf("%d ", visited_cities[i]+1);
+    }
+    printf("\n");
 
     return worst_case_distance;
 }
