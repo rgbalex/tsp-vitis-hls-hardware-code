@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include <cstring> // Include for memcpy
+#include <cmath> // Include for exp
 
 #define INF 0xFFFF
 
@@ -109,6 +110,43 @@ int three_opt(uint8 adjacency_matrix[], int num_cities, int path[20], int path_l
 
 #pragma endregion
 
+#pragma region Helper Functions for simulated-annealing
+void anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_length) {
+    int iteration = -1;
+    int max_iterations = 1000;
+    double temperature = 10000.0;
+    double cooling_rate = 0.9999;
+    double absolute_temperature = 0.00001;
+    int distance = INF;
+    int new_path[20];
+
+    // assuming the cities are already set up
+    
+    distance = path_cost_from_adjacency_matrix(adjacency_matrix, num_cities, path, path_length);
+
+    while (temperature > absolute_temperature) {
+        memcpy(new_path, path, sizeof(new_path));
+        int first = rand() % path_length;
+        int second = rand() % path_length;
+
+        int temp = new_path[first];
+        new_path[first] = new_path[second];
+        new_path[second] = temp;
+
+        int new_distance = path_cost_from_adjacency_matrix(adjacency_matrix, num_cities, new_path, path_length);
+
+        double acceptance_probability = exp((distance - new_distance) / temperature);
+
+        if (acceptance_probability > (rand() % 100) / 100) {
+            memcpy(path, new_path, sizeof(new_path));
+            distance = new_distance;
+        }
+
+        temperature *= cooling_rate;
+        iteration += 1;
+    }
+}
+#pragma endregion
 
 int nearest_neigbour_first (uint8 adjacency_matrix[], int num_cities) {
     int run = 1;
