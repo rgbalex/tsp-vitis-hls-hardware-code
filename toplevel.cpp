@@ -1,12 +1,5 @@
 #include "toplevel.h"
 
-#ifdef __linux__
-#include "hls_math.h"
-#else
-#include <cmath>
-#endif
-
-
 #include <stdio.h>
 
 #include <cstring> // Include for memcpy
@@ -128,8 +121,12 @@ int three_opt(uint8 adjacency_matrix[], int num_cities, int path[20], int path_l
 #pragma region Helper Functions for simulated-annealing
 int anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_length) {
     int iteration = -1;
-    double temperature = 10000.0;
-    double cooling_rate = 0.99999;
+    // light
+    // double temperature = 10000.0;
+    // double cooling_rate = 0.99999;
+    // harsh
+    double temperature = 100000.0;
+    double cooling_rate = 0.999999;
     double absolute_temperature = 0.00001;
     int distance = 9999;
     int current_path[20];
@@ -142,7 +139,7 @@ int anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_leng
     distance = path_cost_from_adjacency_matrix(adjacency_matrix, num_cities, path, path_length);
     int run = 1;
     annealing_while: while (run) {
-        if (temperature > absolute_temperature) { run = 0; }
+        if (temperature < absolute_temperature) { run = 0; }
 
         memcpy(new_path, current_path, sizeof(new_path));
         int first = rand() % path_length;
@@ -160,12 +157,28 @@ int anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_leng
 
         	        int new_distance = path_cost_from_adjacency_matrix(adjacency_matrix, num_cities, new_path, path_length);
 
-					acceptance_probability = exp((distance - new_distance) / temperature);
+                    int acceptance_probability = 100;
+                    if (new_distance > distance) {
+                        acceptance_probability = 0;
+                    } else {
+                        int exponent = (distance - new_distance) / temperature;
+                        acceptance_probability = 100;
+                        if (exponent > 0) {
+                            double decay = 0.9;
+                            int i = 0;
+                            int inner_run = 1;
+                            while (inner_run) {
+//                            for (int i = 0; i < exponent; i++) {
+                            	if (i > exponent) { inner_run = 0; }
+                                acceptance_probability *= decay;
+                            }
+                        }
+                    }
 
-        	        if (acceptance_probability > (rand() % 100) / 100) {
-        	            memcpy(current_path, new_path, sizeof(new_path));
-        	            distance = new_distance;
-        	        }
+                    if (acceptance_probability > (rand() % 100)) {
+                        memcpy(current_path, new_path, sizeof(new_path));
+                        distance = new_distance;
+                    }
 
         	        temperature *= cooling_rate;
         	        iteration += 1;
@@ -303,7 +316,7 @@ int nearest_neigbour_first (uint8 adjacency_matrix[], int num_cities) {
 }
 
 // Main Function - solver
-int toplevel(uint32 *ram, uint32 *message_id, uint32 *number_of_cities, uint32 *scenario_id, uint32 *shortest_calculated_distance) {
+int do_tsp(uint32 *ram, uint32 *message_id, uint32 *number_of_cities, uint32 *scenario_id, uint32 *shortest_calculated_distance) {
     #pragma HLS INTERFACE m_axi port=ram offset=slave bundle=MAXI
     #pragma HLS INTERFACE s_axilite port=message_id bundle=AXILiteS
     #pragma HLS INTERFACE s_axilite port=number_of_cities bundle=AXILiteS

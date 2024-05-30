@@ -52,7 +52,7 @@ struct Solve_Reply
 
 
 // Prototypes
-int toplevel(uint32 *ram, uint32 *message_id, uint32 *number_of_cities, uint32 *scenario_id, uint32 *shortest_calculated_distance);
+int do_tsp(uint32 *ram, uint32 *message_id, uint32 *number_of_cities, uint32 *scenario_id, uint32 *shortest_calculated_distance);
 int path_cost_from_adjacency_matrix(uint8 adjacency_matrix[], int num_cities, int path[], int path_length);
 
 #endif
