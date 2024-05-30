@@ -140,6 +140,7 @@ int anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_leng
     int run = 1;
     annealing_while: while (run) {
         if (temperature < absolute_temperature) { run = 0; }
+        if (iteration > 10000) { run = 0; }
 
         memcpy(new_path, current_path, sizeof(new_path));
         int first = rand() % path_length;
@@ -184,6 +185,7 @@ int anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_leng
         	        iteration += 1;
         }
     }
+    printf("Iteration: %d\n", iteration);
     // set path to best path
     memcpy(path, current_path, sizeof(current_path));
     return distance;
@@ -317,12 +319,13 @@ int nearest_neigbour_first (uint8 adjacency_matrix[], int num_cities) {
 
 // Main Function - solver
 int do_tsp(uint32 *ram, uint32 *message_id, uint32 *number_of_cities, uint32 *scenario_id, uint32 *shortest_calculated_distance) {
+#pragma HLS TOP name=do_tsp
     #pragma HLS INTERFACE m_axi port=ram offset=slave bundle=MAXI
-    #pragma HLS INTERFACE s_axilite port=message_id bundle=AXILiteS
-    #pragma HLS INTERFACE s_axilite port=number_of_cities bundle=AXILiteS
-    #pragma HLS INTERFACE s_axilite port=scenario_id bundle=AXILiteS
-	#pragma HLS INTERFACE s_axilite port=shortest_calculated_distance bundle=AXILiteS
-    #pragma HLS INTERFACE s_axilite port=return bundle=AXILiteS
+    #pragma HLS INTERFACE s_axilite port=message_id bundle=AXILiteS register
+    #pragma HLS INTERFACE s_axilite port=number_of_cities bundle=AXILiteS register
+    #pragma HLS INTERFACE s_axilite port=scenario_id bundle=AXILiteS register
+	#pragma HLS INTERFACE s_axilite port=shortest_calculated_distance bundle=AXILiteS register
+    #pragma HLS INTERFACE s_axilite port=return bundle=AXILiteS register
 
     uint8 cache[400]; // enough space for a 20x20 matrix
 

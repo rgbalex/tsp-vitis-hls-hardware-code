@@ -82,6 +82,7 @@ int test_1() {
     int val = do_tsp(_mainmemory,&_messageId, &_numberOfCities, &_scenarioId, &shortest_distance);
     assert(val == 457);
     assert(shortest_distance == 457);
+    assert(_mainmemory[0] == 457);
 
     return 0;
 }
@@ -278,6 +279,7 @@ int test_4() {
     int val = do_tsp(_mainmemory,&_messageId, &_numberOfCities, &_scenarioId, &shortest_distance);
     assert(val == 134);
     assert(shortest_distance == 134);
+    assert(_mainmemory[0] == 134);
 
 
     return 0;
