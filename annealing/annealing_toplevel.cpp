@@ -1,11 +1,20 @@
 #include "annealing_toplevel.h"
 
+int anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_length);
+
 
 #pragma region Helper Functions
 
 int index(int row, int col, int total_cities) {
 #pragma HLS INLINE
     return row + total_cities * col;
+}
+
+int rand() {
+    // hls did not know how to make a random number generator so I found one on the internet
+    static unsigned int seed = 12345; // initial seed value
+    seed = (1103515245 * seed + 12345) % (1 << 31); // linear congruential generator formula
+    return seed;
 }
 
 int path_cost_from_adjacency_matrix(uint8 adjacency_matrix[], int num_cities, int path[], int path_length) {
@@ -87,10 +96,96 @@ int nearest_neigbour_first (uint8 adjacency_matrix[], int num_cities) {
 
 //    printf("Your upper bound for distance is %d\n", worst_case_distance);
 
-    return worst_case_distance;
+    // perform simulated annealing
+    int annealed_distance = anneal(adjacency_matrix, num_cities, visited_cities, visited_cities_tail);
+    printf("Annealed distance is %d\n", annealed_distance);
+    printf("Annealed route is: ");
+    print_loop_annealed: for (int i = 0; i < visited_cities_tail; i++) {
+        printf("%d ", visited_cities[i]+1);
+    }
+    printf("\n");
+
+    return annealed_distance;
 }
 
 #pragma endregion
+
+#pragma region Simulated-Annealing
+
+int anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_length) {
+    int iteration = -1;
+    // light
+    // double temperature = 10000.0;
+    // double cooling_rate = 0.99999;
+    // harsh
+    double temperature = 100000.0;
+    double cooling_rate = 0.999999;
+    double absolute_temperature = 0.00001;
+    int distance = 9999;
+    int current_path[20];
+    int new_path[20];
+    double acceptance_probability;
+    // memcpy route from path
+    memcpy(current_path, path, sizeof(current_path));
+    // assuming the cities are already set up
+    
+    distance = path_cost_from_adjacency_matrix(adjacency_matrix, num_cities, path, path_length);
+    int run = 1;
+    annealing_while: while (run) {
+        if (temperature < absolute_temperature) { run = 0; }
+        if (iteration > __INT_MAX__) { run = 0; }
+
+        memcpy(new_path, current_path, sizeof(new_path));
+        int first = rand() % path_length;
+        int second = rand() % path_length;
+        bool a = (first == second);
+        bool b = (first == 0 || second == 0);
+        bool c = (first == path_length-1 || second == path_length-1);
+
+        if (!(a || b || c)) {
+        	// printf("Swapping %d and %d\n", first, second);
+
+        	        int temp = new_path[first];
+        	        new_path[first] = new_path[second];
+        	        new_path[second] = temp;
+
+        	        int new_distance = path_cost_from_adjacency_matrix(adjacency_matrix, num_cities, new_path, path_length);
+
+                    int acceptance_probability = 100;
+                    if (new_distance > distance) {
+                        acceptance_probability = 0;
+                    } else {
+                        int exponent = (distance - new_distance) / temperature;
+                        acceptance_probability = 100;
+                        if (exponent > 0) {
+                            double decay = 0.9;
+                            int i = 0;
+                            int inner_run = 1;
+                            while (inner_run) {
+//                            for (int i = 0; i < exponent; i++) {
+                            	if (i > exponent) { inner_run = 0; }
+                                acceptance_probability *= decay;
+                            }
+                        }
+                    }
+
+                    if (acceptance_probability > (rand() % 100)) {
+                        memcpy(current_path, new_path, sizeof(new_path));
+                        distance = new_distance;
+                    }
+
+        	        temperature *= cooling_rate;
+        	        iteration += 1;
+        }
+    }
+    printf("Iteration: %d\n", iteration);
+    // set path to best path
+    memcpy(path, current_path, sizeof(current_path));
+    return distance;
+}
+#pragma endregion
+
+#pragma region Main Function
 
 int annealing(uint32 *ram, int *_number_of_cities, int *_shortest_calculated_distance) {
 	#pragma HLS TOP name=anneal
@@ -116,9 +211,10 @@ int annealing(uint32 *ram, int *_number_of_cities, int *_shortest_calculated_dis
 
     // Rest of the code...
     output_cost = nearest_neigbour_first(cache, num_cities);
-    printf("Nearest Neighbour First: %d\n", output_cost);
 
     *_shortest_calculated_distance = output_cost;
 
     return 99;
 }
+
+#pragma endregion
