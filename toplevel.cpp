@@ -195,7 +195,7 @@ int anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_leng
 int nearest_neigbour_first (uint8 adjacency_matrix[], int num_cities) {
     int run = 1;
     int visited_cities[20];
-#pragma HLS ARRAY_PARTITION variable=visited_cities dim=1 complete
+// #pragma HLS ARRAY_PARTITION variable=visited_cities dim=1 complete
     memset(visited_cities, -1, 20);
     int visited_cities_tail = 0;
 
