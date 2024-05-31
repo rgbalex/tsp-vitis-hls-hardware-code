@@ -118,9 +118,9 @@ int anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_leng
     // double temperature = 10000.0;
     // double cooling_rate = 0.99999;
     // harsh
-    double temperature = 100000.0;
-    double cooling_rate = 0.999999;
-    double absolute_temperature = 0.00001;
+    double temperature = 10000000.0;
+    double cooling_rate = 0.99999999;
+    double absolute_temperature = 0.000001;
     int distance = 9999;
     int current_path[20];
     int new_path[20];
@@ -203,13 +203,13 @@ int annealing(uint32 *ram, int *_number_of_cities, int *_shortest_calculated_dis
     if (max_anneal == 0) {
         max_anneal = 1000;
     } 
-    uint8 cache[400]; // enough space for a 20x20 matrix
+    uint8 cache[400] = {0}; // enough space for a 20x20 matrix, initialized with zeros
     memcpy(cache, ram, 400*sizeof(uint8));
 
     // Print out all elements in cache
     print_loop_i: for (int i = 0; i < num_cities; i++) {
         print_loop_j: for (int j = 0; j < num_cities; j++) {
-            printf("%d ", cache[index(i, j, num_cities)]);
+            printf("%3u ", cache[(num_cities * j) + i]);
         }
         printf("\n");
     }

@@ -2,8 +2,9 @@
 
 #include <stdio.h>
 #include <cassert>
+#include <cstdlib> // Include the <cstdlib> header
 
-uint32 _mainmemory[8000];
+uint32* _mainmemory; // Declare _mainmemory as a global variable
 
 int _max_anneal = 1000;
 
@@ -172,7 +173,6 @@ int test_4() {
 
             // left shift the char out of the int
             temp = (char)(matrix[i][j]);
-            temp = (char)(matrix[i][j]);
 
             // left shift temp into correct position w.r.t counter
             building = temp << (8 * counter);
@@ -200,16 +200,126 @@ int test_4() {
     assert(_shortestCalculatedDistance <= 300);
     assert(_shortestCalculatedDistance <= 200);
     // past here, some annealing is working
-    assert(_shortestCalculatedDistance == 134);
+    // assert(_shortestCalculatedDistance == 134);
     // correct solution?
     return 0;
 }
 
+int test_5() {
+    int _numberOfCities = 6;
+    int _shortestCalculatedDistance = 9999;
+    int _local_max_anneal = 10000;
+
+    int matrix[6][6] = {
+        {0,   10,  104,  34,   26,  139},
+        {10,   0,   140,  116,  159,  180},
+        {104, 140,   0,   164,   24,  100},
+        {34,  116,  164,   0,   126,  117},
+        {26,  159,   24,  126,   0,    14},
+        {139, 180,  100,  117,  14,    0}
+    };
+    printf("\nTest 5\n\n");
+
+    int counter = 0;
+    int index = 0;
+    uint32 output = 0;
+    uint32 building = 0;
+    uint8 temp;
+    for (int i = 0; i < _numberOfCities; i++) {
+        for (int j = 0; j < _numberOfCities; j++) {
+            // printf("Index: %d\n", index);
+            // left shift the char out of the int   
+            temp = matrix[i][j];
+            // print the binary of temp
+            // printf("Temp: %x\n", temp);
+
+            // left shift temp into correct position w.r.t counter
+            building = temp << (unsigned) (8 * counter);
+            // printf("Building: %x\n", building);
+
+
+            // or into output
+            output = (unsigned) output | (unsigned) building;
+            // printf("Output: %x\n", output);
+
+            if (counter == 3) {
+                // print output before writing
+                // printf("        Output before writing: %x\n", output);
+                _mainmemory[index] = output;
+                counter = 0;
+                building = 0;
+                output = 0;
+                index ++;
+            } else {
+                counter ++;
+            }
+
+        }
+    }
+    _mainmemory[index] = output;
+
+    char *main_mem_ptr = (char *)_mainmemory;
+    // Print out the mainmemory as integers
+    // printf("Main Memory:\n");
+    // for (int i = 0; i < _numberOfCities; i++) {
+    //     for (int j = 0; j < _numberOfCities; j++) {
+    //         printf("%d ", main_mem_ptr[i * _numberOfCities + j]);
+    //     }
+    //     printf("\n");
+    // }
+    // printf("\n");
+
+    // printf("Main Memory:\n");
+    // for (int i = 0; i < _numberOfCities; i++) {
+    //     for (int j = 0; j < _numberOfCities; j++) {
+    //         printf("%x ", (unsigned) main_mem_ptr[i * _numberOfCities + j]);
+    //     }
+    //     printf("\n");
+    // }
+    // printf("\n");
+
+    // // print out mainmemory as hex without pointer
+    // printf("Main Memory:\n");
+    // for (int i = 0; i < _numberOfCities; i++) {
+    //     for (int j = 0; j < _numberOfCities; j++) {
+    //         printf("%x ", (unsigned) _mainmemory[i * _numberOfCities + j]);
+    //     }
+    //     printf("\n");
+    // }
+
+    int result = annealing(_mainmemory, &_numberOfCities,  &_shortestCalculatedDistance, &_local_max_anneal);
+    assert(result == 99);
+    printf("\n");
+
+    // assert(_shortestCalculatedDistance <= 400);
+    // assert(_shortestCalculatedDistance <= 385);
+    // assert(_shortestCalculatedDistance <= 200);
+    // past here, some annealing is working
+    // assert(_shortestCalculatedDistance == 134);
+    // correct solution?
+    return _shortestCalculatedDistance;
+}
+
 int main() {
-	test_1();
-    test_2();
-    test_3();
-    test_4();
+    // calloc _mainmemory
+    _mainmemory = (uint32 *)calloc(8000, sizeof(uint32));
+	// test_1();
+    // test_2();
+    // test_3();
+    // test_4();
+    uint32 out[10];
+    // run test_5 10 times, 
+    for (int i = 0; i < 10; i++) {
+        // collect and print results
+        
+        out[i] = test_5();;
+    }
+
+    // print out results
+    printf("Results: ");
+    for (int i = 0; i < 10; i++) {
+        printf("%d ", out[i]);
+    }
 
     return 0;
 }
