@@ -5,6 +5,8 @@
 
 uint32 _mainmemory[8000];
 
+int _max_anneal = 1000;
+
 void test_1(){
     int _numberOfCities = 4;
     int _shortestCalculatedDistance = 9999;
@@ -14,7 +16,7 @@ void test_1(){
     _mainmemory[2] = 0XBD0049FC;
     _mainmemory[3] = 0x00BDFA12;
 
-    int result = annealing(_mainmemory, &_numberOfCities,  &_shortestCalculatedDistance);
+    int result = annealing(_mainmemory, &_numberOfCities,  &_shortestCalculatedDistance, &_max_anneal);
 
     assert(result == 99);
     assert(_shortestCalculatedDistance == 457);
@@ -73,7 +75,7 @@ int test_2() {
     assert(_mainmemory[5] == 0x030F1219);
     assert(_mainmemory[6] == 0); // the missing value
 
-    int result = annealing(_mainmemory, &_numberOfCities,  &_shortestCalculatedDistance);
+    int result = annealing(_mainmemory, &_numberOfCities,  &_shortestCalculatedDistance, &_max_anneal);
     assert(result == 99);
     assert(_shortestCalculatedDistance == 77);
     return 0;
@@ -126,7 +128,7 @@ int test_3() {
     }
     _mainmemory[index] = output;
 
-    int result = annealing(_mainmemory, &_numberOfCities,  &_shortestCalculatedDistance);
+    int result = annealing(_mainmemory, &_numberOfCities,  &_shortestCalculatedDistance, &_max_anneal);
     assert(result == 99);
     // sanity check
     assert(_shortestCalculatedDistance <= 400);
@@ -192,7 +194,7 @@ int test_4() {
     }
     _mainmemory[index] = output;
 
-    int result = annealing(_mainmemory, &_numberOfCities,  &_shortestCalculatedDistance);
+    int result = annealing(_mainmemory, &_numberOfCities,  &_shortestCalculatedDistance, &_max_anneal);
     assert(result == 99);
     assert(_shortestCalculatedDistance <= 400);
     assert(_shortestCalculatedDistance <= 300);

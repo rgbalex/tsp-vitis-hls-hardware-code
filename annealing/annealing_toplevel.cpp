@@ -1,6 +1,6 @@
 #include "annealing_toplevel.h"
 
-int anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_length);
+int anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_length, int max_anneal);
 
 
 #pragma region Helper Functions
@@ -29,7 +29,7 @@ int path_cost_from_adjacency_matrix(uint8 adjacency_matrix[], int num_cities, in
 
 #pragma region Nearest Neighbour First
 
-int nearest_neigbour_first (uint8 adjacency_matrix[], int num_cities) {
+int nearest_neigbour_first (uint8 adjacency_matrix[], int num_cities, int max_anneal) {
     int run = 1;
     int visited_cities[20];
 // #pragma HLS ARRAY_PARTITION variable=visited_cities dim=1 complete
@@ -97,7 +97,7 @@ int nearest_neigbour_first (uint8 adjacency_matrix[], int num_cities) {
 //    printf("Your upper bound for distance is %d\n", worst_case_distance);
 
     // perform simulated annealing
-    int annealed_distance = anneal(adjacency_matrix, num_cities, visited_cities, visited_cities_tail);
+    int annealed_distance = anneal(adjacency_matrix, num_cities, visited_cities, visited_cities_tail, max_anneal);
     printf("Annealed distance is %d\n", annealed_distance);
     printf("Annealed route is: ");
     print_loop_annealed: for (int i = 0; i < visited_cities_tail; i++) {
@@ -112,7 +112,7 @@ int nearest_neigbour_first (uint8 adjacency_matrix[], int num_cities) {
 
 #pragma region Simulated-Annealing
 
-int anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_length) {
+int anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_length, int max_anneal) {
     int iteration = -1;
     // light
     // double temperature = 10000.0;
@@ -133,7 +133,7 @@ int anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_leng
     int run = 1;
     annealing_while: while (run) {
         if (temperature < absolute_temperature) { run = 0; }
-        if (iteration > __INT_MAX__) { run = 0; }
+        if (iteration > max_anneal) { run = 0; }
 
         memcpy(new_path, current_path, sizeof(new_path));
         int first = rand() % path_length;
@@ -187,16 +187,22 @@ int anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_leng
 
 #pragma region Main Function
 
-int annealing(uint32 *ram, int *_number_of_cities, int *_shortest_calculated_distance) {
+int annealing(uint32 *ram, int *_number_of_cities, int *_shortest_calculated_distance, int *_max_anneal) {
 	#pragma HLS TOP name=anneal
     #pragma HLS INTERFACE m_axi port=ram offset=slave bundle=MAXI
     #pragma HLS INTERFACE s_axilite port=_number_of_cities bundle=AXILiteS
 	#pragma HLS INTERFACE s_axilite port=_shortest_calculated_distance bundle=AXILiteS
+    #pragma HLS INTERFACE s_axilite port=_max_anneal bundle=AXILiteS
     #pragma HLS INTERFACE s_axilite port=return bundle=AXILiteS
 
 	int output_cost;
 	int num_cities = *_number_of_cities;
+    int max_anneal = *_max_anneal;
 
+    // check max_annneal is not zero
+    if (max_anneal == 0) {
+        max_anneal = 1000;
+    } 
     uint8 cache[400]; // enough space for a 20x20 matrix
     memcpy(cache, ram, 400*sizeof(uint8));
 
@@ -210,7 +216,7 @@ int annealing(uint32 *ram, int *_number_of_cities, int *_shortest_calculated_dis
     printf("\n");
 
     // Rest of the code...
-    output_cost = nearest_neigbour_first(cache, num_cities);
+    output_cost = nearest_neigbour_first(cache, num_cities, max_anneal);
 
     *_shortest_calculated_distance = output_cost;
 
