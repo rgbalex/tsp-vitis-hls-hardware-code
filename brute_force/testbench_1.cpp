@@ -1,4 +1,4 @@
-#include "kswaps_toplevel.h"
+#include "brute_force_toplevel.h"
 
 #include <stdio.h>
 #include <cassert>
@@ -21,7 +21,8 @@ void test_1() {
 
     int result = solve_the_tsp(_mainmemory, &_numberOfCities, &_shortestCalculatedDistance);
 
-    printf("\nDistance: %d, Return Type: %s\n", _shortestCalculatedDistance, result == 1 ? "Greedy" : "Hardware");
+    printf("Expected: 457, Actual: %d, Return Type: %d, Comparison: %s\n\n", _shortestCalculatedDistance, result, _shortestCalculatedDistance == 457 ? "PASS" : "FAIL");
+
 }
 
 void test_2() {
@@ -61,7 +62,7 @@ void test_2() {
     _mainmemory[index] = output;
 
     int result = solve_the_tsp(_mainmemory, &_numberOfCities, &_shortestCalculatedDistance);
-    printf("\nDistance: %d, Return Type: %s\n", _shortestCalculatedDistance, result == 1 ? "Greedy" : "Hardware");
+    printf("Expected: 77, Actual: %d, Return Type: %d, Comparison: %s\n\n", _shortestCalculatedDistance, result, _shortestCalculatedDistance == 77 ? "PASS" : "FAIL");
 }
 
 void test_3() {
@@ -104,7 +105,7 @@ void test_3() {
     _mainmemory[index] = output;
 
     int result = solve_the_tsp(_mainmemory, &_numberOfCities, &_shortestCalculatedDistance);
-    printf("\nDistance: %d, Return Type: %s\n", _shortestCalculatedDistance, result == 1 ? "Greedy" : "Hardware");
+    printf("Expected: 330, Actual: %d, Return Type: %d, Comparison: %s\n\n", _shortestCalculatedDistance, result, _shortestCalculatedDistance == 330 ? "PASS" : "FAIL");
 }
 
 void test_4() {
@@ -151,7 +152,7 @@ void test_4() {
     _mainmemory[index] = output;
 
     int result = solve_the_tsp(_mainmemory, &_numberOfCities, &_shortestCalculatedDistance);
-    printf("\nDistance: %d, Return Type: %s\n", _shortestCalculatedDistance, result == 1 ? "Greedy" : "Hardware");
+    printf("Expected: 134, Actual: %d, Return Type: %d, Comparison: %s\n\n", _shortestCalculatedDistance, result, _shortestCalculatedDistance == 134 ? "PASS" : "FAIL");
 }
 
 void test_5() {
@@ -192,24 +193,24 @@ void test_5() {
     _mainmemory[index] = output;
 
     int result = solve_the_tsp(_mainmemory, &_numberOfCities, &_shortestCalculatedDistance);
-    printf("\nDistance: %d, Return Type: %s\n", _shortestCalculatedDistance, result == 1 ? "Greedy" : "Hardware");
+    printf("Expected: 339, Actual: %d, Return Type: %d, Comparison: %s\n\n", _shortestCalculatedDistance, result, _shortestCalculatedDistance == 339 ? "PASS" : "FAIL");
 }
 
 void test_6() {
-    int _numberOfCities = 6;
+    int _numberOfCities = 10;
     int _shortestCalculatedDistance = 9999;
 
     int matrix[10][10] = {
-        { 0, 76, 228, 155, 196, 208, 161, 145, 163, 69 },
-        { 76, 0, 221, 120, 12, 60, 195, 96, 23, 215 },
-        { 228, 221, 0, 164, 215, 90, 4, 14, 213, 203 },
-        { 155, 120, 164, 0, 30, 109, 148, 243, 10, 254 },
-        { 196, 12, 215, 30, 0, 40, 225, 137, 250, 135 },
-        { 208, 60, 90, 109, 40, 0, 112, 170, 210, 58 },
-        { 161, 195, 4, 148, 225, 112, 0, 21, 42, 61 },
-        { 145, 96, 14, 243, 137, 170, 21, 0, 56, 168 },
-        { 163, 23, 213, 10, 250, 210, 42, 56, 0, 20 },
-        { 69, 215, 203, 254, 135, 58, 61, 168, 20, 0 }
+        {   0,  76, 228, 155, 196, 208, 161, 145, 163, 69  },
+        {  76,   0, 221, 120,  12,  60, 195,  96,  23, 215 },
+        { 228, 221,   0, 164, 215,  90,   4,  14, 213, 203 },
+        { 155, 120, 164,   0,  30, 109, 148, 243,  10, 254 },
+        { 196,  12, 215,  30,   0,  40, 225, 137, 250, 135 },
+        { 208,  60,  90, 109,  40,   0, 112, 170, 210, 58  },
+        { 161, 195,   4, 148, 225, 112,   0,  21,  42, 61  },
+        { 145,  96,  14, 243, 137, 170,  21,   0,  56, 168 },
+        { 163,  23, 213,  10, 250, 210,  42,  56,   0, 20  },
+        {  69, 215, 203, 254, 135,  58,  61, 168,  20, 0   }
     };
 
     int counter = 0;
@@ -237,36 +238,29 @@ void test_6() {
     _mainmemory[index] = output;
 
     int result = solve_the_tsp(_mainmemory, &_numberOfCities, &_shortestCalculatedDistance);
-    printf("\nDistance: %d, Return Type: %s\n", _shortestCalculatedDistance, result == 1 ? "Greedy" : "Hardware");
+    printf("Expected: 420, Actual: %d, Return Type: %d, Comparison: %s\n\n", _shortestCalculatedDistance, result, _shortestCalculatedDistance == 420 ? "PASS" : "FAIL");
 }
 
 int main() {
     _mainmemory = (uint32*)calloc(8000, sizeof(uint32));
-    // printf("Test 1\n");
-    // test_1();
-    // // should be 457
-    // printf("Should be 457\n\n");
-    // printf("Test 2\n");
-    // test_2();
-    // // should be 77
-    // printf("Should be 77\n\n");
+    printf("\nTest 1\n");
+    test_1();
+
+    printf("Test 2\n");
+    test_2();
+
     printf("Test 3\n");
     test_3();
-    // should be 330
-    printf("Should be 330\n\n");
-    // printf("Test 4\n");
-    // test_4();
-    // // should be 134
-    // printf("Should be 134\n\n");
-    // printf("Test 5\n");
-    // test_5();
-    // // i think its 339
-    // printf("Should be 339\n\n");
-    // printf("Test 6\n");
-    // test_6();
-    // // i think its 420
-    // printf("Should be 420\n\n");
-    // printf("\n");
+
+    printf("Test 4\n");
+    test_4();
+
+    printf("Test 5\n");
+    test_5();
+
+    printf("Test 6\n");
+    test_6();
+    printf("\n");
 
     return 0;
 }
