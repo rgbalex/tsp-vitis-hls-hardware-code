@@ -14,9 +14,11 @@ int path_cost_from_adjacency_matrix(uint8 adjacency_matrix[], int num_cities, in
     path_cost_for_loop: for (int i = 0; i < num_cities; i++) {
 #pragma HLS LOOP_TRIPCOUNT max=20 min=4
 #pragma HLS PIPELINE
-        printf("City %d to %d: %d\n", path[i], path[i+1], adjacency_matrix[index(path[i], path[i+1], num_cities)]);
+        // printf("City %d to %d: %d\n", path[i], path[i+1], adjacency_matrix[index(path[i], path[i+1], num_cities)]);
         cost += adjacency_matrix[index(path[i], path[i+1], num_cities)];
     }
+    // print total cost
+    printf("Total cost: %d\n", cost);   
     return cost;
 }
 
@@ -24,57 +26,28 @@ int path_cost_from_adjacency_matrix(uint8 adjacency_matrix[], int num_cities, in
 
 #pragma region Helper Functions for two-opt
 // see https://slowandsteadybrain.medium.com/traveling-salesman-problem-ce78187cf1f3
-// void two_opt_swap(int* original_path, int* out_path, int first, int second) {
-//     int swapped_path[20];
-//     // zero out path
-//     // memset(swapped_path, -1, 20);
-//     // reset out_path
-//     memcpy(swapped_path, original_path, 20*sizeof(int));
-//     // print initial path
-//     printf("Initial path:  ");
-//     for (int i = 0; i < 20; i++) {
-//         printf("%d ", original_path[i]);
-//     }
-//     printf("\n");
 
-//     // swap elements at positions i and j
-//     int temp = swapped_path[first];
-//     swapped_path[first] = swapped_path[second];
-//     swapped_path[second] = temp;
-
-//     // print swapped path
-//     printf("Swapped path:  ");
-//     for (int i = 0; i < 20; i++) {
-//         printf("%d ", swapped_path[i]);
-//     }
-//     printf("\n");
-
-//     memcpy(swapped_path, out_path, 20*sizeof(int));
-    
-//     // return swapped_path;
-// }
-
-int* two_opt_swap(int in_path[20], int out_path[20], int first, int second) {
+void two_opt_swap(int in_path[20], int out_path[20], int first, int second) {
     // zero out path
-    memset(out_path, -1, 20);
+    // memset(out_path, -1, 20);
     // copy elements from in path
     memcpy(out_path, in_path, 20*sizeof(int));
     // swap elements at positions first and second
     int temp = out_path[first];
     out_path[first] = out_path[second];
     out_path[second] = temp;
-    return out_path;
+    // return out_path;
 }
 
 int two_opt(uint8 adjacency_matrix[], int num_cities, int original_path[20], int path_length) {
 
     // put original path into present_route to be calculated
-    int present_route[20];
-    memcpy(present_route, original_path, sizeof(present_route));
+    int best_route[20];
+    memcpy(best_route, original_path, sizeof(best_route));
 
     int new_distance = 0xFFFF;
     int new_route[20];
-    int best_distance = path_cost_from_adjacency_matrix(adjacency_matrix, num_cities, present_route);
+    int best_distance = path_cost_from_adjacency_matrix(adjacency_matrix, num_cities, best_route);
     // memcpy route from path
     
     for (int i = 1; i < path_length-2; i++) {
@@ -88,7 +61,7 @@ int two_opt(uint8 adjacency_matrix[], int num_cities, int original_path[20], int
             printf(" Present cost: %d\n", best_distance);
             printf("Present route: ");
             for (int i = 0; i < num_cities+1; i++) {
-                printf("%d ", present_route[i]+1);
+                printf("%d ", best_route[i]+1);
             }
             printf("\n");
 
@@ -98,10 +71,10 @@ int two_opt(uint8 adjacency_matrix[], int num_cities, int original_path[20], int
             new_distance = path_cost_from_adjacency_matrix(adjacency_matrix, num_cities, new_route);
 
             // print cost and new_route
-            printf("     New cost: %d\n", best_distance);
+            printf("     New cost: %d\n", new_distance);
             printf("    New route: ");
             for (int i = 0; i < num_cities+1; i++) {
-                printf("%d ", present_route[i]+1);
+                printf("%d ", new_route[i]+1);
             }
             printf("\n");
 
@@ -110,14 +83,65 @@ int two_opt(uint8 adjacency_matrix[], int num_cities, int original_path[20], int
                 best_distance = new_distance;
                 // memcpy route from new_route
                 // present_route = new_route;
-                memcpy(present_route, new_route, sizeof(present_route));
+                memcpy(best_route, new_route, sizeof(best_route));
             }
         }
     }
     // set path to best path
-    memcpy(new_route, present_route, sizeof(present_route));
+    memcpy(new_route, best_route, sizeof(best_route));
     return best_distance;
 }
+#pragma endregion
+
+#pragma region Helper Functions for three-opt
+void three_opt_swap(int in_path[20], int out_path[20], int first, int second, int third) {
+    // zero out path
+    // memset(out_path, -1, 20);
+    // copy elements from in path
+    memcpy(out_path, in_path, 20*sizeof(int));
+    // swap elements at positions first and second
+    int temp = out_path[first];
+    out_path[first] = out_path[second];
+    out_path[second] = temp;
+    // swap elements at positions second and third
+    temp = out_path[second];
+    out_path[second] = out_path[third];
+    out_path[third] = temp;
+    // return out_path;
+}
+
+int three_opt(uint8 adjacency_matrix[], int num_cities, int path[20], int path_length) {
+    int new_distance = 0xFFFF;
+    int new_route[20];
+    int best_distance = path_cost_from_adjacency_matrix(adjacency_matrix, num_cities, path);
+    int present_route[20];
+    // memcpy route from path
+    memcpy(present_route, path, sizeof(present_route));
+    
+    for (int i = 1; i < path_length-3; i++) {
+        for (int j = 1; j < path_length - 2; j++) {
+            for (int k = 1; k < path_length - 1; k++) {
+                three_opt_swap(present_route, new_route, i, j, k);
+                // printf("Swapping %d and %d\n", i, j);
+                // new_distance = path_cost_from_adjacency_matrix(adjacency_matrix, num_cities, new_route);
+                printf("============================= TWO OPT PRUNE ==============================\n");
+                new_distance = two_opt(adjacency_matrix, num_cities, new_route, path_length);
+                printf("============================= TWO OPT END ==============================\n");
+
+                if (new_distance < best_distance) {
+                    best_distance = new_distance;
+                    // memcpy route from new_route
+                    // present_route = new_route;
+                    memcpy(present_route, new_route, sizeof(present_route));
+                }
+            }
+        }
+    }
+    // set path to best path
+    memcpy(path, present_route, sizeof(present_route));
+    return best_distance;
+}
+
 #pragma endregion
 
 #pragma region Nearest Neighbour First
@@ -189,6 +213,15 @@ int nearest_neigbour_first(uint8 adjacency_matrix[], int num_cities, int visited
     printf("Better distance is %d\n", better_distance);
     printf("Better route is: ");
     print_loop_better: for (int i = 0; i < visited_cities_tail; i++) {
+        printf("%d ", visited_cities[i]+1);
+    }
+    printf("\n");
+
+    // perform three opt swap
+    int best_distance = three_opt(adjacency_matrix, num_cities, visited_cities, visited_cities_tail);
+    printf("Best distance is %d\n", best_distance);
+    printf("Best route is: ");
+    print_loop_best: for (int i = 0; i < visited_cities_tail; i++) {
         printf("%d ", visited_cities[i]+1);
     }
     printf("\n");

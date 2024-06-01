@@ -242,18 +242,18 @@ void test_6() {
 
 int main() {
     _mainmemory = (uint32*)calloc(8000, sizeof(uint32));
-    printf("Test 1\n");
-    test_1();
-    // should be 457
-    printf("Should be 457\n\n");
+    // printf("Test 1\n");
+    // test_1();
+    // // should be 457
+    // printf("Should be 457\n\n");
     // printf("Test 2\n");
     // test_2();
     // // should be 77
     // printf("Should be 77\n\n");
-    // printf("Test 3\n");
-    // test_3();
-    // // should be 330
-    // printf("Should be 330\n\n");
+    printf("Test 3\n");
+    test_3();
+    // should be 330
+    printf("Should be 330\n\n");
     // printf("Test 4\n");
     // test_4();
     // // should be 134

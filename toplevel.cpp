@@ -71,7 +71,7 @@ int two_opt(uint8 adjacency_matrix[], int num_cities, int path[20], int path_len
 #pragma endregion
 
 #pragma region Helper Functions for three-opt
-int* three_opt_swap(int in_path[20], int out_path[20], int first, int second, int third) {
+void three_opt_swap(int in_path[20], int out_path[20], int first, int second, int third) {
     // zero out path
     memset(out_path, -1, 20);
     // copy elements from in path
@@ -84,7 +84,7 @@ int* three_opt_swap(int in_path[20], int out_path[20], int first, int second, in
     temp = out_path[second];
     out_path[second] = out_path[third];
     out_path[third] = temp;
-    return out_path;
+    // return out_path;
 }
 
 int three_opt(uint8 adjacency_matrix[], int num_cities, int path[20], int path_length) {
