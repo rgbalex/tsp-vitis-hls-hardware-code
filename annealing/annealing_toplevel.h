@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <cstring>
 
-#define INF 0xFF
+// #define INF 0xFF
 
 typedef unsigned char uint8;
 typedef unsigned int uint32;

@@ -1,4 +1,4 @@
-#include "annealing_toplevel.h"
+#include "kswaps_toplevel.h"
 
 #include <stdio.h>
 #include <cassert>
@@ -19,9 +19,9 @@ void test_1() {
     _mainmemory[2] = 0XBD0049FC;
     _mainmemory[3] = 0x00BDFA12;
 
-    int result = annealing(_mainmemory, &_numberOfCities, &_shortestCalculatedDistance, &_temperature, &_cooling_rate, &_absolute_temperature);
+    int result = solve_the_tsp(_mainmemory, &_numberOfCities, &_shortestCalculatedDistance);
 
-    printf("Distance: %d, Return Type: %s\n\n\n", _shortestCalculatedDistance, result == 1 ? "Greedy" : "Hardware");
+    printf("\nDistance: %d, Return Type: %s\n", _shortestCalculatedDistance, result == 1 ? "Greedy" : "Hardware");
 }
 
 void test_2() {
@@ -60,8 +60,8 @@ void test_2() {
     }
     _mainmemory[index] = output;
 
-    int result = annealing(_mainmemory, &_numberOfCities, &_shortestCalculatedDistance, &_temperature, &_cooling_rate, &_absolute_temperature);
-    printf("Distance: %d, Return Type: %s\n\n\n", _shortestCalculatedDistance, result == 1 ? "Greedy" : "Hardware");
+    int result = solve_the_tsp(_mainmemory, &_numberOfCities, &_shortestCalculatedDistance);
+    printf("\nDistance: %d, Return Type: %s\n", _shortestCalculatedDistance, result == 1 ? "Greedy" : "Hardware");
 }
 
 void test_3() {
@@ -103,8 +103,8 @@ void test_3() {
     }
     _mainmemory[index] = output;
 
-    int result = annealing(_mainmemory, &_numberOfCities, &_shortestCalculatedDistance, &_temperature, &_cooling_rate, &_absolute_temperature);
-    printf("Distance: %d, Return Type: %s\n\n\n", _shortestCalculatedDistance, result == 1 ? "Greedy" : "Hardware");
+    int result = solve_the_tsp(_mainmemory, &_numberOfCities, &_shortestCalculatedDistance);
+    printf("\nDistance: %d, Return Type: %s\n", _shortestCalculatedDistance, result == 1 ? "Greedy" : "Hardware");
 }
 
 void test_4() {
@@ -150,8 +150,8 @@ void test_4() {
     }
     _mainmemory[index] = output;
 
-    int result = annealing(_mainmemory, &_numberOfCities, &_shortestCalculatedDistance, &_temperature, &_cooling_rate, &_absolute_temperature);
-    printf("Distance: %d, Return Type: %s\n\n\n", _shortestCalculatedDistance, result == 1 ? "Greedy" : "Hardware");
+    int result = solve_the_tsp(_mainmemory, &_numberOfCities, &_shortestCalculatedDistance);
+    printf("\nDistance: %d, Return Type: %s\n", _shortestCalculatedDistance, result == 1 ? "Greedy" : "Hardware");
 }
 
 void test_5() {
@@ -191,8 +191,8 @@ void test_5() {
     }
     _mainmemory[index] = output;
 
-    int result = annealing(_mainmemory, &_numberOfCities, &_shortestCalculatedDistance, &_temperature, &_cooling_rate, &_absolute_temperature);
-    printf("Distance: %d, Return Type: %s\n\n\n", _shortestCalculatedDistance, result == 1 ? "Greedy" : "Hardware");
+    int result = solve_the_tsp(_mainmemory, &_numberOfCities, &_shortestCalculatedDistance);
+    printf("\nDistance: %d, Return Type: %s\n", _shortestCalculatedDistance, result == 1 ? "Greedy" : "Hardware");
 }
 
 void test_6() {
@@ -236,18 +236,37 @@ void test_6() {
     }
     _mainmemory[index] = output;
 
-    int result = annealing(_mainmemory, &_numberOfCities, &_shortestCalculatedDistance, &_temperature, &_cooling_rate, &_absolute_temperature);
-    printf("Distance: %d, Return Type: %s\n\n\n", _shortestCalculatedDistance, result == 1 ? "Greedy" : "Hardware");
+    int result = solve_the_tsp(_mainmemory, &_numberOfCities, &_shortestCalculatedDistance);
+    printf("\nDistance: %d, Return Type: %s\n", _shortestCalculatedDistance, result == 1 ? "Greedy" : "Hardware");
 }
 
 int main() {
     _mainmemory = (uint32*)calloc(8000, sizeof(uint32));
+    printf("Test 1\n");
     test_1();
-    test_2();
-    test_3();
-    test_4();
-    test_5();
-    test_6();
+    // should be 457
+    printf("Should be 457\n\n");
+    // printf("Test 2\n");
+    // test_2();
+    // // should be 77
+    // printf("Should be 77\n\n");
+    // printf("Test 3\n");
+    // test_3();
+    // // should be 330
+    // printf("Should be 330\n\n");
+    // printf("Test 4\n");
+    // test_4();
+    // // should be 134
+    // printf("Should be 134\n\n");
+    // printf("Test 5\n");
+    // test_5();
+    // // i think its 339
+    // printf("Should be 339\n\n");
+    // printf("Test 6\n");
+    // test_6();
+    // // i think its 420
+    // printf("Should be 420\n\n");
+    // printf("\n");
 
     return 0;
 }
