@@ -57,7 +57,10 @@ int solve_the_tsp(uint32 *ram, int *_number_of_cities, int *_shortest_calculated
     }
     _current_best_path[num_cities] = 0;
 
-    uint8 cache[400]; // enough space for a 20x20 matrix, initialized with zeros
+    uint8 cache[400];
+#pragma HLS ARRAY_PARTITION variable=cache dim=1 factor=4 cyclic
+//	#pragma HLS ARRAY_PARTITION variable=cache dim=1 complete
+    // enough space for a 20x20 matrix, initialized with zeros
     memcpy(cache, ram, 400*sizeof(uint8));
 
     #pragma region Print out all elements in cache
@@ -121,6 +124,7 @@ int solve_the_tsp(uint32 *ram, int *_number_of_cities, int *_shortest_calculated
             current_cost = path_cost_from_adjacency_matrix(cache, num_cities, a);    
             if (current_cost < current_best_cost) {
                 current_best_cost = current_cost;
+                memcpy(_current_best_path, a, 20*sizeof(int));
             }
         }
 
@@ -142,6 +146,11 @@ int solve_the_tsp(uint32 *ram, int *_number_of_cities, int *_shortest_calculated
     } // while(i < N)
 
     *_shortest_calculated_distance = current_best_cost;
+    
+    // copy the best path to the first 20 bytes of mainmemory
+    memcpy(ram, _current_best_path, 20*sizeof(int));
+    // since we already know this start value, and the number of cities requested,
+    // this information can be reconstructed by the ARM core outside of vitis
 
     return -1;
 }
