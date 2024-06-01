@@ -26,7 +26,7 @@ void test_1(){
 
     int result = annealing(_mainmemory, &_numberOfCities,  &_shortestCalculatedDistance, &_temperature, &_cooling_rate, &_absolute_temperature);
 
-    printf("Distance: %d, Return Type: %s\n", _shortestCalculatedDistance, result == 1 ? "Greedy" : "Hardware");
+    printf("Distance: %d, Return Type: %d\n", _shortestCalculatedDistance, result);
     // assert(result == 99);
     // assert(_shortestCalculatedDistance == 457);
 }

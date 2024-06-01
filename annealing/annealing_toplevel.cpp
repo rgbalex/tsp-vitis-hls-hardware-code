@@ -1,7 +1,7 @@
 #include "annealing_toplevel.h"
 #include <cmath>
 
-int anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_length, double temperature, double cooling_rate, double absolute_temperature, int *_shortest_calculated_distance);
+int anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_length, double temperature, double cooling_rate, double absolute_temperature, int *_shortest_calculated_distance, int *_return_type);
 
 #pragma region Helper Functions
 
@@ -40,7 +40,7 @@ int nearest_neigbour_first (uint8 adjacency_matrix[], int num_cities, double tem
     int visited_cities_tail = 0;
 
     int distance = 0;
-    int min_distance = INF;
+    int min_distance = 0xFFFF;
     int min_city = -1;
 
     int skip = 0;
@@ -85,7 +85,7 @@ int nearest_neigbour_first (uint8 adjacency_matrix[], int num_cities, double tem
             visited_cities_tail += 1;
             worst_case_distance += min_distance;
             // printf("City: %d, Distance: %d, Worst case: %d\n", min_city, min_distance, worst_case_distance);
-            min_distance = INF;
+            min_distance = 0xFFFF;
         }
     }
 
@@ -99,7 +99,7 @@ int nearest_neigbour_first (uint8 adjacency_matrix[], int num_cities, double tem
 
 
     // perform simulated annealing
-    int annealed_distance = anneal(adjacency_matrix, num_cities, visited_cities, visited_cities_tail, temperature, cooling_rate, absolute_temperature, _shortest_calculated_distance);
+    int annealed_distance = anneal(adjacency_matrix, num_cities, visited_cities, visited_cities_tail, temperature, cooling_rate, absolute_temperature, _shortest_calculated_distance, _return_type);
     printf("Your upper bound for distance is %d\n", worst_case_distance);
     printf("Annealed distance is %d\n", annealed_distance);
     printf("Annealed route is: ");
@@ -110,10 +110,10 @@ int nearest_neigbour_first (uint8 adjacency_matrix[], int num_cities, double tem
     printf("======================================================== \n");
 
     if (annealed_distance <= worst_case_distance) {
-        *_return_type = 0;
+        // *_return_type = 0;
         return annealed_distance;
     } else {
-        *_return_type = 1;
+        // *_return_type = 1;
         return worst_case_distance;
     }
     
@@ -124,7 +124,7 @@ int nearest_neigbour_first (uint8 adjacency_matrix[], int num_cities, double tem
 
 #pragma region Simulated-Annealing
 
-int anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_length, double temperature, double cooling_rate, double absolute_temperature, int *_shortest_calculated_distance) {
+int anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_length, double temperature, double cooling_rate, double absolute_temperature, int *_shortest_calculated_distance, int *_return_type) {
     // print the starting path
     printf("Starting path: ");
     for (int i = 0; i < path_length; i++) {
@@ -240,6 +240,7 @@ int anneal(uint8 adjacency_matrix[], int num_cities, int path[20], int path_leng
     printf("======================================================== \n");
     // set path to best path
     memcpy(path, current_path, sizeof(current_path));
+    *_return_type = iteration;
     return distance;
 }
 #pragma endregion
