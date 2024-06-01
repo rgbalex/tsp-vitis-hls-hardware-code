@@ -91,12 +91,12 @@ int solve_the_tsp(uint32 *ram, int *_number_of_cities, int *_shortest_calculated
     memcpy(a, _current_best_path, 20*sizeof(int));
 
     unsigned int p[20];
-#pragma HLS ARRAY_PARTITION variable=p dim=1 complete
+	#pragma HLS ARRAY_PARTITION variable=p dim=1 complete
     unsigned int i, j, tmp; // Upper Index i; Lower Index j
 
     initialise_p: for(i = 0; i < num_cities; i++)   // initialize arrays; a[N] can be any type
     {
-#pragma HLS LOOP_TRIPCOUNT max=20 min=4
+	#pragma HLS LOOP_TRIPCOUNT max=20 min=4
 	#pragma HLS PIPELINE
         // a[i] = i + 1;   // a[i] value is not revealed and can be arbitrary
         p[i] = i;
@@ -110,7 +110,6 @@ int solve_the_tsp(uint32 *ram, int *_number_of_cities, int *_shortest_calculated
     
     run_quick_perm: while(i < num_cities-1) {
 	#pragma HLS LOOP_FLATTEN off
-	#pragma HLS LOOP_TRIPCOUNT max=19 min=3
         p[i]--;             // decrease index "weight" for i by one
         j = i % 2 * p[i];   // IF i is odd then j = p[i] otherwise j = 0
         tmp = a[j+1];         // swap(a[j], a[i])
